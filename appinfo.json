@@ -3,7 +3,7 @@
     "capabilities": [
         ""
     ],
-    "companyName": "NPPi3enz",
+    "companyName": "Nipitpon Chantada",
     "longName": "TimeMovieTH",
     "projectType": "pebblejs",
     "resources": {
@@ -29,6 +29,11 @@
                 "type": "font"
             },
             {
+                "file": "images/logoxl_timemovieth.png",
+                "name": "IMAGES_LOGOXL_TIMEMOVIETH_PNG",
+                "type": "png"
+            },
+            {
                 "file": "images/logo_timemovieth.png",
                 "menuIcon": true,
                 "name": "IMAGES_LOGO_TIMEMOVIETH_PNG",
@@ -37,7 +42,7 @@
         ]
     },
     "shortName": "TimeMovieTH",
-    "uuid": "44ce5bd7-665c-4357-a753-52ceaa04381c",
+    "uuid": "7e08d767-4898-4ab7-bd82-f5098899239d",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {

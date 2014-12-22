@@ -53,21 +53,38 @@ var parseListMovie = function(data) {
 };
 
 // Show splash screen while waiting for data
-var splashWindow = new UI.Window();
+var splashWindow = new UI.Window({ fullscreen: true });
 
 // Text element to inform user
-var text = new UI.Text({
-  position: new Vector2(0, 0),
-  size: new Vector2(144, 168),
-  text:'Downloading Cinema data...',
-  font:'GOTHIC_28_BOLD',
-  color:'white',
+var titlet = new UI.Text({
+  position: new Vector2(0, 100),
+  size: new Vector2(144, 36),
+  text:'TimeMovieTH',
+  font:'GOTHIC_24_BOLD',
+  color:'black',
   textOverflow:'wrap',
   textAlign:'center',
-	backgroundColor:'black'
+	backgroundColor:'white'
+});
+var text = new UI.Text({
+  position: new Vector2(0, 130),
+  size: new Vector2(144, 36),
+  text:'Downloading Cinema data...',
+  font:'GOTHIC_14_BOLD',
+  color:'black',
+  textOverflow:'wrap',
+  textAlign:'center',
+	backgroundColor:'white'
+});
+var image = new UI.Image({
+  position: new Vector2(0, 0),
+  size: new Vector2(144, 110),
+  image: 'images/logoxl_timemovieth.png'
 });
 
 // Add to splashWindow and show
+splashWindow.add(image);
+splashWindow.add(titlet);
 splashWindow.add(text);
 splashWindow.show();
 
@@ -117,17 +134,6 @@ ajax(
             scrollable:true
           });
           detailCard.show();
-           /* var showT = "";
-            for(var x=0;x<p.showtime.length;x++){
-              showT += p.showtime[x];
-            }
-            // Create the Card for detailed view
-            var detailCard = new UI.Card({
-              title:p.name,
-              subtitle:p.detail,
-              body: p.cinema+'\n'+showT
-            });
-            detailCard.show();*/
         });
         
         resultsMovie.show();
