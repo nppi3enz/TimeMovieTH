@@ -1,3 +1,7 @@
+/********************************
+  APP Name : TimeMovieTH
+  Author : Nipitpon Chantada
+*********************************/
 var UI = require('ui');
 var ajax = require('ajax');
 var Vector2 = require('vector2');
