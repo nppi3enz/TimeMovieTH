@@ -35,14 +35,14 @@ var parseListMovie = function(data) {
     var rating = data[i].rating;
     var system = data[i].system;
     var language = data[i].language;
-    //var theatre = data[i].theatre;
+    var theatre = data[i].theatre;
     //var showtime = [];
-    var showtime = data[i].theatre+' \n';
+    var showtime = "";
     for(var j = 0; j < data[i].showtime.length; j++){
       showtime += data[i].showtime[j]+' ';
     }
     var title = name;
-    var detail = '('+rating+') ('+system+') '+language;
+    var detail = theatre+'('+rating+') ('+system+') '+language;
     
     // Add to menu items array
     items.push({
@@ -95,7 +95,7 @@ splashWindow.show();
 // Make request to openweathermap.org
 ajax(
   {
-    url:'http://nppi3enz.in.th/timemovieth/fetch.php',
+    url:'http://www.padao.in.th/timemovieth/fetch.php',
     type:'json'
   },
   function(data) {
@@ -112,12 +112,13 @@ ajax(
     
     // Add an action for SELECT
     resultsMenu.on('select', function(e) {
+      splashWindow.show();
       console.log('Item number ' + e.itemIndex + ' was pressed!');
       
       //fetch in cinema
       ajax(
       {
-        url:'http://nppi3enz.in.th/timemovieth/cinema.php?id='+e.itemIndex,
+        url:'http://www.padao.in.th/timemovieth/cinema.php?id='+e.itemIndex,
         type:'json'
       },
       function(data){
@@ -133,13 +134,14 @@ ajax(
         resultsMovie.on('select', function(p) {
           var detailCard = new UI.Card({
             title: p.item.title,
-            subtitle:p.item.subtitle,
-            body: p.item.showtime,
+            subtitle:p.item.showtime,
+            body: p.item.subtitle,
             scrollable:true
           });
           detailCard.show();
         });
         
+        splashWindow.hide();
         resultsMovie.show();
         //resultsMenu.hide();
       });
