@@ -5,6 +5,20 @@
 var UI = require('ui');
 var ajax = require('ajax');
 var Vector2 = require('vector2');
+var Settings = require('settings');
+
+Settings.config(
+  { url: 'http://www.google.com' },
+  function(e) {
+    console.log('google.com');
+
+    // Reset color to red before opening the webview
+    Settings.option('color', 'red');
+  },
+  function(e) {
+    console.log('closed configurable');
+  }
+);
 
 var parseFeed = function(data) {
   var items = [];
@@ -15,18 +29,19 @@ var parseFeed = function(data) {
 
     // Get date/time substring
     var time = data[i].description;
-
+    var template = data[i].template;
     // Add to menu items array
     items.push({
       title:title,
-      subtitle:time
+      subtitle:time,
+      template:template
     });
   }
 
   // Finally return whole array
   return items;
 };
-var parseListMovie = function(data) {
+var parseMajor = function(data) {
   var items = [];
   //for(var i = 0; i < quantity; i++) {
   for(var i = 0; i < data.length; i++) {
@@ -47,6 +62,7 @@ var parseListMovie = function(data) {
     // Add to menu items array
     items.push({
       title:title,
+      footer:detail,
       subtitle:detail,
       showtime:showtime
     });
@@ -55,7 +71,40 @@ var parseListMovie = function(data) {
   // Finally return whole array
   return items;
 };
+var parseSF = function(data) {
+  var items = [];
+  //for(var i = 0; i < quantity; i++) {
+  for(var i = 0; i < data.length; i++) {
+    // Always upper case the description string
+    var name = data[i].name;
+    var remark = data[i].remark;
 
+    var showtime = "";
+    for(var k=0;k<data[i].showtime.length;k++) {
+      showtime += data[i].showtime[k].date+'\n';
+      for(var j=0;j<data[i].showtime[k].time.length;j++){
+        showtime += data[i].showtime[k].time[j]+' ';
+      }
+      showtime += "\n--------------\n";
+    }
+    /*for(var j = 0; j < data[i].showtime.length; j++){
+      showtime += data[i].showtime[j]+' ';
+    }*/
+    var title = name;
+   // var detail = theatre+'('+rating+') ('+system+') '+language;
+    
+    // Add to menu items array
+    items.push({
+      title:title,
+      footer:' ',
+      subtitle:remark,
+      showtime:showtime
+    });
+  }
+
+  // Finally return whole array
+  return items;
+};
 // Show splash screen while waiting for data
 var splashWindow = new UI.Window({ fullscreen: true });
 
@@ -122,7 +171,12 @@ ajax(
         type:'json'
       },
       function(data){
-          var movieItems = parseListMovie(data);
+        var movieItems;
+        if(e.item.template == "major") {
+          movieItems = parseMajor(data);
+        } else if(e.item.template == "sf") {
+          movieItems = parseSF(data);
+        }
         
         // Construct Menu to show to user
           var resultsMovie = new UI.Menu({
@@ -135,7 +189,7 @@ ajax(
           var detailCard = new UI.Card({
             title: p.item.title,
             subtitle:p.item.showtime,
-            body: p.item.subtitle,
+            body: p.item.footer,
             scrollable:true
           });
           detailCard.show();
