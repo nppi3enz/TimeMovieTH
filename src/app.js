@@ -5,20 +5,6 @@
 var UI = require('ui');
 var ajax = require('ajax');
 var Vector2 = require('vector2');
-var Settings = require('settings');
-
-Settings.config(
-  { url: 'http://www.google.com' },
-  function(e) {
-    console.log('google.com');
-
-    // Reset color to red before opening the webview
-    Settings.option('color', 'red');
-  },
-  function(e) {
-    console.log('closed configurable');
-  }
-);
 
 var parseFeed = function(data) {
   var items = [];
@@ -26,12 +12,13 @@ var parseFeed = function(data) {
   for(var i = 0; i < data.length; i++) {
     // Always upper case the description string
     var title = data[i].cinema;
-
+    var id = data[i].id;
     // Get date/time substring
     var time = data[i].description;
     var template = data[i].template;
     // Add to menu items array
     items.push({
+      id:id,
       title:title,
       subtitle:time,
       template:template
@@ -105,6 +92,57 @@ var parseSF = function(data) {
   // Finally return whole array
   return items;
 };
+var parseHouse = function(data) {
+   var items = [];
+  //for(var i = 0; i < quantity; i++) {
+  for(var i = 0; i < data.length; i++) {
+    // Always upper case the description string
+    var title = data[i].name;
+    var subtitle = data[i].subtitle;
+    //var showtime = [];
+    var remark = data[i].remark;
+    var showtime = "";
+    for(var j = 0; j < data[i].showtime.length; j++){
+      showtime += data[i].showtime[j]+' ';
+    }
+    
+    // Add to menu items array
+    items.push({
+      title:title,
+      footer:subtitle+"\n"+remark,
+      subtitle:subtitle,
+      showtime:showtime
+    });
+  }
+
+  // Finally return whole array
+  return items;
+};
+var parseLido = function(data) {
+   var items = [];
+  //for(var i = 0; i < quantity; i++) {
+  for(var i = 0; i < data.length; i++) {
+    // Always upper case the description string
+    var title = data[i].name;
+    var subtitle = data[i].theatre+data[i].description;
+    //var showtime = [];
+    var remark = data[i].remark;
+    var showtime = "";
+    for(var j = 0; j < data[i].showtime.length; j++){
+      showtime += data[i].showtime[j]+' ';
+    }
+    
+    // Add to menu items array
+    items.push({
+      title:title,
+      footer:subtitle+"\n"+remark,
+      subtitle:subtitle,
+      showtime:showtime
+    });
+  }
+  // Finally return whole array
+  return items;
+};
 // Show splash screen while waiting for data
 var splashWindow = new UI.Window({ fullscreen: true });
 
@@ -167,7 +205,7 @@ ajax(
       //fetch in cinema
       ajax(
       {
-        url:'http://www.padao.in.th/timemovieth/cinema.php?id='+e.itemIndex,
+        url:'http://www.padao.in.th/timemovieth/cinema.php?id='+e.item.id,
         type:'json'
       },
       function(data){
@@ -176,6 +214,10 @@ ajax(
           movieItems = parseMajor(data);
         } else if(e.item.template == "sf") {
           movieItems = parseSF(data);
+        } else if(e.item.template == "house") {
+          movieItems = parseHouse(data);
+        } else if(e.item.template == "lido") {
+          movieItems = parseLido(data);
         }
         
         // Construct Menu to show to user

@@ -1,7 +1,7 @@
 {
     "appKeys": {},
     "capabilities": [
-        "configurable"
+        ""
     ],
     "companyName": "Nipitpon Chantada",
     "longName": "TimeMovieTH",
@@ -29,14 +29,14 @@
                 "type": "font"
             },
             {
-                "file": "images/logoxl_timemovieth.png",
-                "name": "IMAGES_LOGOXL_TIMEMOVIETH_PNG",
-                "type": "png"
-            },
-            {
                 "file": "images/logo_timemovieth.png",
                 "menuIcon": true,
                 "name": "IMAGES_LOGO_TIMEMOVIETH_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/logoxl_timemovieth.png",
+                "name": "IMAGES_LOGOXL_TIMEMOVIETH_PNG",
                 "type": "png"
             }
         ]
