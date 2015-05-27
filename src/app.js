@@ -1,10 +1,44 @@
 /********************************
   APP Name : TimeMovieTH
+  Version : 1.2
   Author : Nipitpon Chantada
+  Website : NPPi3enz.in.th
 *********************************/
 var UI = require('ui');
 var ajax = require('ajax');
 var Vector2 = require('vector2');
+var Settings = require('settings');
+//var setdata;
+var list = [];
+var getlist = [];
+
+
+
+// Set a configurable with the open callback
+Settings.config(
+  { url: 'http://lab.nppi3enz.in.th/movietimeth/config.php' },
+  function(e) {
+    console.log('opening configurable');
+    // Reset color to red before opening the webview
+    Settings.option('color', 'red');
+    
+  },
+  function(e) {
+    console.log('closed configurable');
+    //setdata = JSON.stringify(e.options);
+    //setdata = e.options;
+    list = JSON.parse(decodeURIComponent(e.response));
+    Settings.data('mylist', list);
+    //showCinema(list);
+    var detailAlert = new UI.Card({
+            title: 'Please Restart app for renew setting.',
+          //  subtitle: 'subtitle',
+           // body: JSON.stringify(e.options),
+            //scrollable:true
+          });
+          detailAlert.show();
+  }
+);
 
 var parseFeed = function(data) {
   var items = [];
@@ -143,6 +177,34 @@ var parseLido = function(data) {
   // Finally return whole array
   return items;
 };
+var parseCentury = function(data) {
+  var items = [];
+  //for(var i = 0; i < quantity; i++) {
+  for(var i = 0; i < data.length; i++) {
+    // Always upper case the description string
+    var name = data[i].name;
+    var system = data[i].system;
+    var theatre = data[i].theatre;
+    //var showtime = [];
+    var showtime = "";
+    for(var j = 0; j < data[i].showtime.length; j++){
+      showtime += data[i].showtime[j]+' ';
+    }
+    var title = name;
+    var detail = theatre+' ('+system+') ';
+    
+    // Add to menu items array
+    items.push({
+      title:title,
+      footer:detail,
+      subtitle:detail,
+      showtime:showtime
+    });
+  }
+
+  // Finally return whole array
+  return items;
+};
 // Show splash screen while waiting for data
 var splashWindow = new UI.Window({ fullscreen: true });
 
@@ -150,7 +212,7 @@ var splashWindow = new UI.Window({ fullscreen: true });
 var titlet = new UI.Text({
   position: new Vector2(0, 100),
   size: new Vector2(144, 36),
-  text:'TimeMovieTH',
+  text:'MovieTimeTH',
   font:'GOTHIC_24_BOLD',
   color:'black',
   textOverflow:'wrap',
@@ -179,15 +241,41 @@ splashWindow.add(titlet);
 splashWindow.add(text);
 splashWindow.show();
 
-// Make request to openweathermap.org
+list = Settings.data('mylist');
+
+/*============== START LOAD AJAX ==================*/
+var cinema;
 ajax(
   {
-    url:'http://www.padao.in.th/timemovieth/fetch.php',
+    url:'http://lab.nppi3enz.in.th/movietimeth/fetch.php',
+    //method:'get',
     type:'json'
   },
   function(data) {
+    cinema = data;
+    getlist = [];
+    for(var i=0;i<list.length;i++){
+                for(var j=0;j<cinema.length;j++){
+                    if(cinema[j].id == list[i]){
+                        getlist.push(cinema[j]);
+                    }
+                }
+            }
+    /*
+    var detailCard4 = new UI.Card({
+            title: 'Complete',
+            //subtitle: 'subtitle',
+            subtitle: 'sub'+list.toString(),
+            //body: test,
+            body: JSON.stringify(getlist),
+            //body: cinema.toString(),
+            scrollable:true
+          });
+          detailCard4.show();    
+          */
+    
     // Create an array of Menu items
-    var menuItems = parseFeed(data);
+    var menuItems = parseFeed(getlist);
 
     // Construct Menu to show to user
     var resultsMenu = new UI.Menu({
@@ -205,7 +293,7 @@ ajax(
       //fetch in cinema
       ajax(
       {
-        url:'http://www.padao.in.th/timemovieth/cinema.php?id='+e.item.id,
+        url:'http://lab.nppi3enz.in.th/movietimeth/cinema.php?id='+e.item.id,
         type:'json'
       },
       function(data){
@@ -218,6 +306,8 @@ ajax(
           movieItems = parseHouse(data);
         } else if(e.item.template == "lido") {
           movieItems = parseLido(data);
+        } else if(e.item.template == "century") {
+          movieItems = parseCentury(data);
         }
         
         // Construct Menu to show to user
@@ -236,7 +326,6 @@ ajax(
           });
           detailCard.show();
         });
-        
         splashWindow.hide();
         resultsMovie.show();
         //resultsMenu.hide();
@@ -248,8 +337,17 @@ ajax(
     // Show the Menu, hide the splash
     resultsMenu.show();
     splashWindow.hide();
+    
   },
   function(error) {
+     var detailCard3 = new UI.Card({
+            title: 'Error',
+            //subtitle: 'subtitle',
+            body: error,
+            scrollable:true
+          });
+          detailCard3.show();    
     console.log('Download failed: ' + error);
   }
 );
+/*===================================*/

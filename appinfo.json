@@ -1,10 +1,10 @@
 {
     "appKeys": {},
     "capabilities": [
-        ""
+        "configurable"
     ],
     "companyName": "Nipitpon Chantada",
-    "longName": "TimeMovieTH",
+    "longName": "MovieTimeTH",
     "projectType": "pebblejs",
     "resources": {
         "media": [
@@ -41,10 +41,11 @@
             }
         ]
     },
-    "shortName": "TimeMovieTH",
+    "sdkVersion": "3",
+    "shortName": "MovieTimeTH",
     "uuid": "7e08d767-4898-4ab7-bd82-f5098899239d",
     "versionCode": 1,
-    "versionLabel": "1.0",
+    "versionLabel": "1.2",
     "watchapp": {
         "watchface": false
     }
